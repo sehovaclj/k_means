@@ -1,0 +1,20 @@
+# pycharm ide
+.idea/
+.idea/*
+
+# virtual envs
+venv/
+*.env
+
+# compiler
+*.sw*
+*.sv*
+
+# cpython compiler
+*.pyc
+
+# byte compiler
+__pycache__/
+
+# unit testing cache
+.pytest_cache
