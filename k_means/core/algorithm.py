@@ -5,10 +5,8 @@ import numpy.random as random
 import matplotlib.pyplot as plt
 from math import sqrt
 from k_means.utils.mapping import map_parameters_from_message
-from k_means.utils.algorithm import create_random_dists, dists_as_matrix, \
-    dists_min_max, initial_centroids
-from k_means.utils.plotting import plot_initial_dists, add_centroids_to_plots, \
-    remove_plots, choose_colours
+from k_means.core.data_prep import main_data_engineering
+from k_means.core.plotting import main_initial_plotting
 
 # we can suppress this warning since we are not threading and plotting will be okay
 warnings.filterwarnings("ignore", message="Starting a Matplotlib GUI outside of the main thread will likely fail.")
@@ -16,26 +14,18 @@ warnings.filterwarnings("ignore", message="Starting a Matplotlib GUI outside of 
 
 def main_k_means_algorithm(message):
     # get parameters from post request message
+    # TODO: MAKE THIS INTO A CLASS !!!
     num_clusters, num_dists, num_samples, eps, max_iter, add_noise, pause_length, seed \
         = map_parameters_from_message(message)
     # preserving random state
     np.random.seed(seed)
-    # create the random distributions
-    x_dists, y_dists, num_dists = create_random_dists(num_dists, num_samples, add_noise)
-    # plot the initial random distributions
-    plots = plot_initial_dists(num_dists, add_noise, x_dists, y_dists, pause_length)
-    # A now contains all distributions in (x,y) coordinate form
-    A = dists_as_matrix(num_dists, x_dists, y_dists)
-    # find min/max values of the x and y distributions. Will be used as boundaries for the initial random centroids
-    boundaries = dists_min_max(x_dists, y_dists)
-    # obtain initial random (uniform) centroids
-    centroids_prev = initial_centroids(num_clusters, boundaries)
-    # add centroids to colorless plot
-    plot_centroids, legend_centroids = add_centroids_to_plots(centroids_prev, boundaries, pause_length)
-    # remove plots from figure
-    plots = remove_plots(num_dists, plots)
-    # colours for clusters. Randomly chosen. This is for plotting
-    colours = choose_colours(num_clusters)
+    # main data engineering is first
+    x_dists, y_dists, num_dists, matrix_dists, boundaries, centroids_prev = \
+        main_data_engineering(num_clusters, num_dists, num_samples, add_noise)
+    # plot initial dists and centroids
+    plots, plot_centroids, legend_centroids, colours = \
+        main_initial_plotting(num_clusters, num_dists, add_noise, x_dists, y_dists, pause_length, centroids_prev,
+                              boundaries)
 
     import pdb
     pdb.set_trace()

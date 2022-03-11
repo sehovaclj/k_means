@@ -26,12 +26,12 @@ def dists_as_matrix(num_dists: int,
                     x_dists: list,
                     y_dists: list) -> np.array:
     # convert distribution lists to Matrices
-    A = []
+    matrix_dists = []
     for i in range(num_dists):
-        A.append(np.array([x_dists[i], y_dists[i]]).transpose())
+        matrix_dists.append(np.array([x_dists[i], y_dists[i]]).transpose())
     # shape here == num_dists x num_samples x 2 (the 2 here represents the (x,y) coordinate pairing)
-    A = np.array(A)
-    return A
+    matrix_dists = np.array(matrix_dists)
+    return matrix_dists
 
 
 def dists_min_max(x_dists: list,
