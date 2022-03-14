@@ -2,24 +2,27 @@
 import numpy as np
 import numpy.random as random
 from typing import Dict
+from k_means.utils.mapping import Parameters
 
 
-def create_random_dists(num_dists: int,
-                        num_samples: int,
-                        add_noise: bool) -> [list, list, int]:
+def create_random_dists(parameters: Parameters) -> [list, list, int]:
     # empty lists to store dists
     x_dists, y_dists = [], []
     # creating random distributions, with a slight random shift
-    for i in range(num_dists):
-        x_dists.append(random.randn(num_samples) + (random.randint(2, 6) * random.randn()))
-        y_dists.append(random.randn(num_samples) + (random.randint(2, 6) * random.randn()))
+    for i in range(parameters.num_dists):
+        x_dists.append(random.randn(parameters.num_samples) +
+                       (random.randint(2, 6) * random.randn()))
+        y_dists.append(random.randn(parameters.num_samples) +
+                       (random.randint(2, 6) * random.randn()))
     # if a larger noise distribution is desired, set add_noise=True
-    if add_noise:
-        x_dists.append(random.randn(num_samples) * (random.randint(4, 8) * random.randn()))
-        y_dists.append(random.randn(num_samples) * (random.randint(4, 8) * random.randn()))
+    if parameters.add_noise:
+        x_dists.append(random.randn(parameters.num_samples) *
+                       (random.randint(4, 8) * random.randn()))
+        y_dists.append(random.randn(parameters.num_samples) *
+                       (random.randint(4, 8) * random.randn()))
         # we've added a noise dist, so increase the num dists by 1
-        num_dists = num_dists + 1
-    return x_dists, y_dists, num_dists
+        parameters.num_dists = parameters.num_dists + 1
+    return x_dists, y_dists, parameters
 
 
 def dists_as_matrix(num_dists: int,
@@ -52,3 +55,10 @@ def initial_centroids(num_clusters: int,
         centroids_prev.append([random.uniform(boundaries['min_x'], boundaries['max_x']),
                                random.uniform(boundaries['min_y'], boundaries['max_y'])])
     return np.array(centroids_prev)
+
+
+def clusters_list(num_clusters):
+    clusters = []
+    for i in range(num_clusters):
+        clusters.append([])
+    return clusters
