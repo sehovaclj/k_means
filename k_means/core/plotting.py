@@ -33,4 +33,4 @@ def plot_simulation(parameters,
         plt.legend()
         plt.pause(parameters.pause_length)
     # end of results loop
-    plt.show()
+    plt.pause(parameters.pause_length * 20)
