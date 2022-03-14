@@ -8,6 +8,6 @@ default_message = {
     "EpsilonForConvergence": 0.01,
     "MaxIterations": 15,
     "AddNoise": True,
-    "PauseLength": 1.0,
+    "PauseLength": 0.5,
     "Seed": 11
 }

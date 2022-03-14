@@ -41,12 +41,12 @@ def plot_initial_centroids(data_eng):
     plot_cens = plt.scatter(data_eng.initial_centroids[:, 0],
                             data_eng.initial_centroids[:, 1],
                             c='r', marker='*', s=200, label='Initial Centroids')
-    leg_cens = plt.legend()
+    plt.legend()
     plt.xlim(left=data_eng.boundaries['min_x'] - 1.0,
              right=data_eng.boundaries['max_x'] + 1.0)
     plt.ylim(bottom=data_eng.boundaries['min_y'] - 1.0,
              top=data_eng.boundaries['max_y'] + 1.0)
-    return plot_cens, leg_cens
+    return plot_cens
 
 
 def append_to_scatter_plot(results_iter,
@@ -67,6 +67,19 @@ def plot_new_centroids(results_iter):
         s=results_iter['new_centroids']['s'],
         label=results_iter['new_centroids']['label'])
     return plot_cens
+
+
+def clear_old_clusters_and_plot_new_ones(parameters,
+                                         plots,
+                                         results_iter):
+    # clear old clusters from plot (figure 2)
+    for i in range(parameters.num_clusters):
+        plots[i]['plot_' + str(i + 1)].remove()
+    # plot the clusters
+    plots = []
+    for i in range(parameters.num_clusters):
+        plots.append(append_to_scatter_plot(results_iter, i))
+    return plots
 
 
 def choose_colours(num_clusters: int) -> np.array:
