@@ -1,5 +1,6 @@
-"""main that kicks off local server"""
-from k_means.server.app import rest_serving
+"""Runs program with default parameters."""
+from k_means.core.main import run
+from k_means.resources.input import default_message
 
 if __name__ == "__main__":
-    rest_serving()
+    run(default_message)

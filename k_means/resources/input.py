@@ -1,6 +1,3 @@
-HOST = '0.0.0.0'
-PORT = '9000'
-
 default_message = {
     "NumberClusters": 3,
     "NumberDistributions": 5,

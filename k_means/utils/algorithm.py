@@ -6,6 +6,7 @@ from k_means.utils.mapping import Parameters
 
 
 def create_random_dists(parameters: Parameters) -> [list, list, int]:
+    print('Creating random initial distributions')
     # empty lists to store dists
     x_dists, y_dists = [], []
     # creating random distributions, with a slight random shift
@@ -50,6 +51,7 @@ def dists_min_max(x_dists: list,
 
 def initial_centroids(num_clusters: int,
                       boundaries: Dict[str, float]) -> np.array:
+    print('Choosing initial centroids randomly')
     centroids_prev = []
     for i in range(num_clusters):
         centroids_prev.append([random.uniform(boundaries['min_x'], boundaries['max_x']),

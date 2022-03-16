@@ -9,6 +9,7 @@ from k_means.utils.plotting import scatter_plot_initial_dists, \
 def plot_simulation(parameters,
                     data_eng,
                     results):
+    print('Plotting initial distributions and simulating the K-means clustering results')
     # plot the initial distributions
     scatter_plot_initial_dists(parameters, data_eng)
     # plot distributions without colour. Keep track of this figure for remaining K-means clustering
@@ -33,4 +34,5 @@ def plot_simulation(parameters,
         plt.legend()
         plt.pause(parameters.pause_length)
     # end of results loop
-    plt.pause(parameters.pause_length * 20)
+    print('End of program, plots will be active for 20 seconds')
+    plt.pause(20.0)

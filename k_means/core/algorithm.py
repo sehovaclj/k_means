@@ -1,17 +1,28 @@
-"""Module to run the main k-means algorithm."""
+"""Module with functions that run the main k-means algorithm."""
 import numpy as np
 from math import sqrt
 from k_means.utils.mapping import Parameters
 from k_means.core.data_prep import DataEng
 from k_means.utils.algorithm import clusters_list
+from typing import List, Dict
 
 
 def k_means_algorithm(parameters: Parameters,
-                      data_eng: DataEng):
+                      data_eng: DataEng) -> List[any]:
+    """Summarizes the main steps of the algorithm.
+
+    Args:
+        parameters: see k_means.utils.mapping.Parameters for more details.
+        data_eng: see k_means.core.data_prep.DataEng for more details.
+
+    Returns:
+        results: list containing results of the k-means algorithm.
+    """
     # store results for plotting
     results = []
     counter = 0
     convergence = False
+    print('Starting K-Means Algorithm...')
     while not convergence:
         data_eng = calculate_distances(parameters, data_eng)
         data_eng = find_new_centroids(parameters, data_eng)
@@ -22,7 +33,20 @@ def k_means_algorithm(parameters: Parameters,
 
 
 def calculate_distances(parameters: Parameters,
-                        data_eng: DataEng):
+                        data_eng: DataEng) -> DataEng:
+    """For each sample in each distribution, calculate the distance
+        to each cluster (Euclidean distance), then find the minimum distance cluster index
+        and add that point to that cluster.
+
+    Args:
+        parameters: see k_means.utils.mapping.Parameters for more details.
+        data_eng: see k_means.core.data_prep.DataEng for more details.
+
+    Returns:
+        data_eng: since we change the clusters,
+            we need to update the data_eng.cluster attribute and return data_eng.
+    """
+    # for each sample in each distribution...
     for dist in range(parameters.num_dists):
         for sample in range(parameters.num_samples):
             distances = []
@@ -38,9 +62,21 @@ def calculate_distances(parameters: Parameters,
     return data_eng
 
 
-def find_new_centroids(parameters,
-                       data_eng):
-    # compute mean of cluster -- and make this our new centroid for that cluster
+def find_new_centroids(parameters: Parameters,
+                       data_eng: DataEng) -> DataEng:
+    """Find new cluster centroids by taking the mean
+        of the data points in the cluster,
+        Take the mean of all x points: this is our x of the new centroid,
+        Take the mean of all y points: this is our y of the new centroid.
+
+    Args:
+        parameters: see k_means.utils.mapping.Parameters for more details.
+        data_eng: see k_means.core.data_prep.DataEng for more details.
+
+    Returns:
+        data_eng: since we change the centroids,
+            we need to update the data_eng.centroids_new attribute and return data_eng.
+    """
     data_eng.centroids_new = data_eng.centroids_prev.copy()
     for i in range(parameters.num_clusters):
         data_eng.centroids_new[i] = [np.array(data_eng.clusters[i])[:, 0].mean(),
@@ -48,9 +84,19 @@ def find_new_centroids(parameters,
     return data_eng
 
 
-def append_to_results(parameters,
-                      data_eng,
-                      counter):
+def append_to_results(parameters: Parameters,
+                      data_eng: DataEng,
+                      counter: int) -> Dict[any, any]:
+    """Create a dict to store the results for plotting.
+
+    Args:
+        parameters: see k_means.utils.mapping.Parameters for more details.
+        data_eng: see k_means.core.data_prep.DataEng for more details.
+        counter: the iteration number.
+
+    Returns:
+        results_iter: dict of results used in plotting the simulation.
+    """
     results_iter = {
         'iteration': counter,
         'cluster_plots': [],
@@ -73,14 +119,23 @@ def append_to_results(parameters,
     return results_iter
 
 
-def test_convergence(parameters,
-                     data_eng,
-                     counter):
+def test_convergence(parameters: Parameters,
+                     data_eng: DataEng,
+                     counter: int) -> [DataEng, bool]:
     """Test for convergence.
-    Easiest way, also saves most memory, is to test if the centroids distance from the
+        Easiest way, also saves most memory, is to test if the centroids distance from the
         previous centroid is less than epsilon (usually a small value).
         Hence, if the centroid has not moved or barely moved, the desired number of clusters has been obtained
 
+    Args:
+        parameters: see k_means.utils.mapping.Parameters for more details.
+        data_eng: see k_means.core.data_prep.DataEng for more details.
+        counter: the iteration number.
+
+    Returns:
+        data_eng: if we have not reached convergence,
+            we need to reset our clusters and assign our new found centroids as the previous ones.
+        convergence: True or False, have we reached convergence or not.
     """
     distances_bool = []
     for i in range(parameters.num_clusters):

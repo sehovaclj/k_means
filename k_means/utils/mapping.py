@@ -3,7 +3,13 @@ from typing import Dict
 
 
 class Parameters:
-    """Contain message parameters.
+    """Contains parameters.
+    Used to organize and clean up the code. Easier to pass one class with many attributes to functions
+    than to constantly pass 8 parameters.
+
+    Args:
+        message: input dict containing parameters.
+            see k_means.resources.input for the default message and parameters.
 
     """
 
