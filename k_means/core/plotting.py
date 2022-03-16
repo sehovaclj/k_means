@@ -1,14 +1,26 @@
 """Module to plot the simulation and iteration results of the algorithm."""
 import matplotlib.pyplot as plt
-from typing import List, Dict
+from typing import List
 from k_means.utils.plotting import scatter_plot_initial_dists, \
     scatter_plot_initial_dists_no_colour, plot_initial_centroids, \
-    append_to_scatter_plot, plot_new_centroids, clear_old_clusters_and_plot_new_ones
+    plot_new_centroids, clear_old_clusters_and_plot_new_ones
+from k_means.utils.mapping import Parameters
+from k_means.core.data_prep import DataEng
 
 
-def plot_simulation(parameters,
-                    data_eng,
-                    results):
+def plot_simulation(parameters: Parameters,
+                    data_eng: DataEng,
+                    results: List[any]) -> None:
+    """Structure of plotting the k-means algorithm results.
+
+    Args:
+        parameters: see k_means.utils.mapping.Parameters for more details.
+        data_eng: see k_means.core.data_prep.DataEng for more details.
+        results: list containing results of the k-means algorithm run.
+
+    Returns:
+        None.
+    """
     print('Plotting initial distributions and simulating the K-means clustering results')
     # plot the initial distributions
     scatter_plot_initial_dists(parameters, data_eng)
