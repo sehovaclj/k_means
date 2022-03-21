@@ -1,7 +1,7 @@
 """Module that contains functions called during the core algorithm run."""
-import numpy as np
-import numpy.random as random
 from typing import Dict, List
+import numpy as np
+from numpy import random
 from k_means.utils.mapping import Parameters
 
 
@@ -20,7 +20,7 @@ def create_random_dists(parameters: Parameters) -> [list, list, int]:
     # empty lists to store dists
     x_dists, y_dists = [], []
     # creating random distributions, with a slight random shift
-    for i in range(parameters.num_dists):
+    for _ in range(parameters.num_dists):
         x_dists.append(random.randn(parameters.num_samples) +
                        (random.randint(2, 6) * random.randn()))
         y_dists.append(random.randn(parameters.num_samples) +
@@ -91,7 +91,7 @@ def initial_centroids(num_clusters: int,
     """
     print('Choosing initial centroids randomly')
     centroids_prev = []
-    for i in range(num_clusters):
+    for _ in range(num_clusters):
         centroids_prev.append([random.uniform(boundaries['min_x'], boundaries['max_x']),
                                random.uniform(boundaries['min_y'], boundaries['max_y'])])
     return np.array(centroids_prev)
@@ -107,7 +107,7 @@ def clusters_list(num_clusters: int) -> List[list]:
         clusters: empty list of lists.
     """
     clusters = []
-    for i in range(num_clusters):
+    for _ in range(num_clusters):
         clusters.append([])
     return clusters
 

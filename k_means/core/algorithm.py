@@ -1,10 +1,10 @@
 """Module with functions that run the main k-means algorithm."""
-import numpy as np
 from math import sqrt
+from typing import List, Dict
+import numpy as np
 from k_means.utils.mapping import Parameters
 from k_means.core.data_prep import DataEng
 from k_means.utils.algorithm import clusters_list
-from typing import List, Dict
 
 
 def k_means_algorithm(parameters: Parameters,
@@ -149,7 +149,7 @@ def test_convergence(parameters: Parameters,
     # if all distances are under a certain eps threshold, end algorithm;
     # if not, assign new centroids as previous, and clear clusters from plots
     if all(distances_bool):
-        print('\nConvergence achieved in {} iterations'.format(counter + 1))
+        print(f'\nConvergence achieved in {counter + 1} iterations')
         convergence = True
     elif not all(distances_bool):
         data_eng.centroids_prev = data_eng.centroids_new

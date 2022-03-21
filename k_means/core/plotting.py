@@ -1,6 +1,6 @@
 """Module to plot the simulation and iteration results of the algorithm."""
-import matplotlib.pyplot as plt
 from typing import List
+import matplotlib.pyplot as plt
 from k_means.utils.plotting import scatter_plot_initial_dists, \
     scatter_plot_initial_dists_no_colour, plot_initial_centroids, \
     plot_new_centroids, clear_old_clusters_and_plot_new_ones

@@ -1,7 +1,6 @@
 """Module to contain functions used in core algorithm."""
-import matplotlib.pyplot
-import matplotlib.pyplot as plt
 from typing import List, Dict
+import matplotlib.pyplot as plt
 from k_means.utils.mapping import Parameters
 from k_means.core.data_prep import DataEng
 
@@ -56,7 +55,7 @@ def scatter_plot_initial_dists_no_colour(parameters: Parameters,
     return plots
 
 
-def plot_initial_centroids(data_eng: DataEng) -> matplotlib.pyplot.scatter:
+def plot_initial_centroids(data_eng: DataEng) -> plt.scatter:
     """Plot the initial centroids and give the plot limits to visualize better.
 
     Args:
@@ -93,7 +92,7 @@ def append_to_scatter_plot(results_iter: Dict[any, any],
         label=results_iter['cluster_plots'][i]['plot_label_' + str(i + 1)])}
 
 
-def plot_new_centroids(results_iter: Dict[any, any]) -> matplotlib.pyplot.scatter:
+def plot_new_centroids(results_iter: Dict[any, any]) -> plt.scatter:
     """Plots the new centroids for that iteration.
 
     Args:

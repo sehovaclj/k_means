@@ -1,10 +1,10 @@
 """Main sequence of functions to run algorithm."""
+from typing import Dict
 import numpy as np
 from k_means.utils.mapping import Parameters
 from k_means.core.data_prep import main_data_engineering
 from k_means.core.algorithm import k_means_algorithm
 from k_means.core.plotting import plot_simulation
-from typing import Dict
 
 
 def run(message: Dict[str, any]) -> None:
