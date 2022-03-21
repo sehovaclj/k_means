@@ -1,12 +1,22 @@
 """Module to contain functions used in core algorithm."""
-import numpy as np
-import numpy.random as random
+import matplotlib.pyplot
 import matplotlib.pyplot as plt
 from typing import List, Dict
+from k_means.utils.mapping import Parameters
+from k_means.core.data_prep import DataEng
 
 
-def scatter_plot_initial_dists(parameters,
-                               data_eng) -> None:
+def scatter_plot_initial_dists(parameters: Parameters,
+                               data_eng: DataEng) -> None:
+    """Plot the initial distributions in colour, to identify them before the algorithm and simulation.
+
+    Args:
+        parameters: see k_means.utils.mapping.Parameters for more details.
+        data_eng: see k_means.core.data_prep.DataEng for more details.
+
+    Returns:
+        None.
+    """
     plt.figure(1)
     # add points to scatter plot
     for i in range(parameters.num_dists):
@@ -23,8 +33,17 @@ def scatter_plot_initial_dists(parameters,
     plt.legend()
 
 
-def scatter_plot_initial_dists_no_colour(parameters,
-                                         data_eng):
+def scatter_plot_initial_dists_no_colour(parameters: Parameters,
+                                         data_eng: DataEng) -> List[any]:
+    """Plot the data points with no colour, to visualize the points prior to algorithm.
+
+    Args:
+        parameters: see k_means.utils.mapping.Parameters for more details.
+        data_eng: see k_means.core.data_prep.DataEng for more details.
+
+    Returns:
+        plots: list of dicts containing the scatter plots.
+    """
     plots = []
     for i in range(parameters.num_dists):
         plots.append({'plot_' + str(i + 1): plt.scatter(
@@ -37,7 +56,15 @@ def scatter_plot_initial_dists_no_colour(parameters,
     return plots
 
 
-def plot_initial_centroids(data_eng):
+def plot_initial_centroids(data_eng: DataEng) -> matplotlib.pyplot.scatter:
+    """Plot the initial centroids and give the plot limits to visualize better.
+
+    Args:
+        data_eng: see k_means.core.data_prep.DataEng for more details.
+
+    Returns:
+        plot_cens: scatter plot of the centroids.
+    """
     plot_cens = plt.scatter(data_eng.initial_centroids[:, 0],
                             data_eng.initial_centroids[:, 1],
                             c='r', marker='*', s=200, label='Initial Centroids')
@@ -49,8 +76,16 @@ def plot_initial_centroids(data_eng):
     return plot_cens
 
 
-def append_to_scatter_plot(results_iter,
-                           i):
+def append_to_scatter_plot(results_iter: Dict[any, any],
+                           i: int) -> Dict[any, any]:
+    """Return a dict that will append a scatter plot to a list. Mainly used to keep code oranized and neat.
+
+    Args:
+        results_iter: dict containing results of that iteration of the simulation.
+        i: cluster index.
+
+    Returns: dict containing scatter plots.
+    """
     return {'plot_' + str(i + 1): plt.scatter(
         results_iter['cluster_plots'][i]['plot_x_' + str(i + 1)],
         results_iter['cluster_plots'][i]['plot_y_' + str(i + 1)],
@@ -58,7 +93,15 @@ def append_to_scatter_plot(results_iter,
         label=results_iter['cluster_plots'][i]['plot_label_' + str(i + 1)])}
 
 
-def plot_new_centroids(results_iter):
+def plot_new_centroids(results_iter: Dict[any, any]) -> matplotlib.pyplot.scatter:
+    """Plots the new centroids for that iteration.
+
+    Args:
+        results_iter: dict containing results information of that iteration of the simulation.
+
+    Returns:
+        scatter plot containing new centroids.
+    """
     plot_cens = plt.scatter(
         results_iter['new_centroids']['x'],
         results_iter['new_centroids']['y'],
@@ -69,9 +112,19 @@ def plot_new_centroids(results_iter):
     return plot_cens
 
 
-def clear_old_clusters_and_plot_new_ones(parameters,
-                                         plots,
-                                         results_iter):
+def clear_old_clusters_and_plot_new_ones(parameters: Parameters,
+                                         plots: List[any],
+                                         results_iter: Dict[any, any]) -> List[any]:
+    """Remove old clusters from plots and append new ones. This is needed for the visualization process.
+
+    Args:
+        parameters: see k_means.utils.mapping.Parameters for more details.
+        plots: list of dicts containing scatter plots.
+        results_iter: results containing information of the iteration of the simulation.
+
+    Returns:
+        plots: list of dicts containing scatter plots.
+    """
     # clear old clusters from plot (figure 2)
     for i in range(parameters.num_clusters):
         plots[i]['plot_' + str(i + 1)].remove()
@@ -80,10 +133,3 @@ def clear_old_clusters_and_plot_new_ones(parameters,
     for i in range(parameters.num_clusters):
         plots.append(append_to_scatter_plot(results_iter, i))
     return plots
-
-
-def choose_colours(num_clusters: int) -> np.array:
-    colours = np.zeros([num_clusters, 1, 3])
-    for i in range(num_clusters):
-        colours[i] = [random.random(), random.random(), random.random()]
-    return colours

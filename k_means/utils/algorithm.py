@@ -1,11 +1,21 @@
 """Module that contains functions called during the core algorithm run."""
 import numpy as np
 import numpy.random as random
-from typing import Dict
+from typing import Dict, List
 from k_means.utils.mapping import Parameters
 
 
 def create_random_dists(parameters: Parameters) -> [list, list, int]:
+    """Creates the initial distributions.
+
+    Args:
+        parameters: see k_means.utils.mapping.Parameters for more details.
+
+    Returns:
+        x_dists: random numbers of the distributions in the x-axis.
+        y_dists: random numbers of the distributions in the y-axis.
+        parameters: if we alter any of the parameters, need to return an updatded verion.
+    """
     print('Creating random initial distributions')
     # empty lists to store dists
     x_dists, y_dists = [], []
@@ -29,6 +39,16 @@ def create_random_dists(parameters: Parameters) -> [list, list, int]:
 def dists_as_matrix(num_dists: int,
                     x_dists: list,
                     y_dists: list) -> np.array:
+    """Convert distribution parameters into an array for ease of use.
+
+    Args:
+        num_dists: number of distributions used.
+        x_dists: random numbers of the distributions in the x-axis.
+        y_dists: random numbers of the distributions in the y-axis.
+
+    Returns:
+        matrix_dists: x and y distributions as points in a matrix.
+    """
     # convert distribution lists to Matrices
     matrix_dists = []
     for i in range(num_dists):
@@ -40,6 +60,15 @@ def dists_as_matrix(num_dists: int,
 
 def dists_min_max(x_dists: list,
                   y_dists: list) -> Dict[str, float]:
+    """Find limits of x and y distributions.
+
+    Args:
+        x_dists: random numbers of the distributions in the x-axis.
+        y_dists: random numbers of the distributions in the y-axis.
+
+    Returns:
+        boundaries: min and max in both the x and y direction.
+    """
     boundaries = {
         'min_x': np.array(x_dists).min(),
         'min_y': np.array(y_dists).min(),
@@ -51,6 +80,15 @@ def dists_min_max(x_dists: list,
 
 def initial_centroids(num_clusters: int,
                       boundaries: Dict[str, float]) -> np.array:
+    """Create random initial centroids within our limits.
+
+    Args:
+        num_clusters: number of clusters to find, hence number of needed initial centroids.
+        boundaries: need the limits in which to randomly choose initial centroids.
+
+    Returns:
+        np.array(centroids_prev): array containing initial centroids.
+    """
     print('Choosing initial centroids randomly')
     centroids_prev = []
     for i in range(num_clusters):
@@ -59,8 +97,31 @@ def initial_centroids(num_clusters: int,
     return np.array(centroids_prev)
 
 
-def clusters_list(num_clusters):
+def clusters_list(num_clusters: int) -> List[list]:
+    """Create a list of empty lists for number of desired clusters.
+
+    Args:
+        num_clusters: number of clusters to find, we will be storing points in these empty indexed lists.
+
+    Returns:
+        clusters: empty list of lists.
+    """
     clusters = []
     for i in range(num_clusters):
         clusters.append([])
     return clusters
+
+
+def choose_colours(num_clusters: int) -> np.array:
+    """"Randomly choose colours equivalent to the number of clusters we need to find.
+
+    Args:
+        num_clusters: desired number of clusters to find.
+
+    Returns:
+        colours: array of randomly chosen numbers which == a colour when plotting.
+    """
+    colours = np.zeros([num_clusters, 1, 3])
+    for i in range(num_clusters):
+        colours[i] = [random.random(), random.random(), random.random()]
+    return colours
