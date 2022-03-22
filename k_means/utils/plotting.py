@@ -77,7 +77,7 @@ def plot_initial_centroids(data_eng: DataEng) -> plt.scatter:
 
 def append_to_scatter_plot(results_iter: Dict[any, any],
                            i: int) -> Dict[any, any]:
-    """Return a dict that will append a scatter plot to a list. Mainly used to keep code oranized and neat.
+    """Return a dict that will append a scatter plot to a list. Mainly used to keep code organized and neat.
 
     Args:
         results_iter: dict containing results of that iteration of the simulation.

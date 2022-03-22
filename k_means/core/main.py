@@ -26,5 +26,5 @@ def run(message: Dict[str, any]) -> None:
     data_eng, parameters = main_data_engineering(parameters)
     # main k-means algorithm, return results
     results = k_means_algorithm(parameters, data_eng)
-    # plot initial distributions and results of our k means algorithm
+    # plot initial distributions, results and simulation of our k means algorithm
     plot_simulation(parameters, data_eng, results)
