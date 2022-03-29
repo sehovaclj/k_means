@@ -11,6 +11,7 @@ def test_default_message():
            0 < default_message['EpsilonForConvergence'] < 1
     assert type(default_message['MaxIterations']) == int and default_message['MaxIterations'] > 0
     assert type(default_message['AddNoise']) == bool
+    assert type(default_message['ShowPlots']) == bool
     assert type(default_message['PauseLength']) == float and default_message['PauseLength'] > 0
     assert type(default_message['Seed']) == int and default_message['Seed'] > 0
     return True

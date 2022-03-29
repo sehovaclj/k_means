@@ -22,5 +22,6 @@ class Parameters:
         self.eps = message['EpsilonForConvergence']
         self.max_iter = message['MaxIterations']
         self.add_noise = message['AddNoise']
+        self.show_plots = message['ShowPlots']
         self.pause_length = message['PauseLength']
         self.seed = message['Seed']

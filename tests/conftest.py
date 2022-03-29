@@ -3,6 +3,7 @@ import numpy as np
 from k_means.resources.input import default_message
 from k_means.utils.mapping import Parameters
 from k_means.core.data_prep import main_data_engineering
+from k_means.core.algorithm import k_means_algorithm
 
 
 @pytest.fixture(scope='module')
@@ -45,3 +46,13 @@ def example_results_iter():
     results_iter['new_centroids']['s'] = 200
     results_iter['new_centroids']['label'] = 'Centroids Iter ' + str(counter + 1)
     return results_iter
+
+
+@pytest.fixture(scope='module')
+def example_results():
+    data_eng, parameters = main_data_engineering(Parameters(default_message))
+    return {
+        'parameters': parameters,
+        'data_eng': data_eng,
+        'results': k_means_algorithm(parameters, data_eng)
+    }

@@ -1,127 +1,137 @@
-"""Module that contains functions called during the core algorithm run."""
-from typing import Dict, List
+"""Module to store functions used in core algorithm sequence."""
+from math import sqrt
+from typing import Dict
 import numpy as np
-from numpy import random
 from k_means.utils.mapping import Parameters
+from k_means.core.data_prep import DataEng
+from k_means.utils.data_prep import clusters_list
 
 
-def create_random_dists(parameters: Parameters) -> [list, list, int]:
-    """Creates the initial distributions.
+def calculate_distances(parameters: Parameters,
+                        data_eng: DataEng) -> DataEng:
+    """For each sample in each distribution, calculate the distance
+        to each cluster (Euclidean distance), then find the minimum distance cluster index
+        and add that point to that cluster.
 
     Args:
         parameters: see k_means.utils.mapping.Parameters for more details.
+        data_eng: see k_means.core.data_prep.DataEng for more details.
 
     Returns:
-        x_dists: random numbers of the distributions in the x-axis.
-        y_dists: random numbers of the distributions in the y-axis.
-        parameters: if we alter any of the parameters, need to return an updatded verion.
+        data_eng: since we change the clusters,
+            we need to update the data_eng.cluster attribute and return data_eng.
     """
-    print('Creating random initial distributions')
-    # empty lists to store dists
-    x_dists, y_dists = [], []
-    # creating random distributions, with a slight random shift
-    for _ in range(parameters.num_dists):
-        x_dists.append(random.randn(parameters.num_samples) +
-                       (random.randint(2, 6) * random.randn()))
-        y_dists.append(random.randn(parameters.num_samples) +
-                       (random.randint(2, 6) * random.randn()))
-    # if a larger noise distribution is desired, set add_noise=True
-    if parameters.add_noise:
-        x_dists.append(random.randn(parameters.num_samples) *
-                       (random.randint(4, 8) * random.randn()))
-        y_dists.append(random.randn(parameters.num_samples) *
-                       (random.randint(4, 8) * random.randn()))
-        # we've added a noise dist, so increase the num dists by 1
-        parameters.num_dists = parameters.num_dists + 1
-    return x_dists, y_dists, parameters
+    # for each sample in each distribution...
+    for dist in range(parameters.num_dists):
+        for sample in range(parameters.num_samples):
+            distances = []
+            # for each sample, compute distance to each centroid
+            for cluster in range(parameters.num_clusters):
+                distances.append(
+                    sqrt((data_eng.matrix_dists[dist][sample][0] - data_eng.centroids_prev[cluster][0]) ** 2 + (
+                            data_eng.matrix_dists[dist][sample][1] - data_eng.centroids_prev[cluster][1]) ** 2))
+            # find smallest distance
+            c_idx = np.array(distances).argmin()
+            # append sample, or point, to that cluster
+            data_eng.clusters[c_idx].append(data_eng.matrix_dists[dist][sample])
+    return data_eng
 
 
-def dists_as_matrix(num_dists: int,
-                    x_dists: list,
-                    y_dists: list) -> np.array:
-    """Convert distribution parameters into an array for ease of use.
+def find_new_centroids(parameters: Parameters,
+                       data_eng: DataEng) -> DataEng:
+    """Find new cluster centroids by taking the mean
+        of the data points in the cluster,
+        Take the mean of all x points: this is our x of the new centroid,
+        Take the mean of all y points: this is our y of the new centroid.
 
     Args:
-        num_dists: number of distributions used.
-        x_dists: random numbers of the distributions in the x-axis.
-        y_dists: random numbers of the distributions in the y-axis.
+        parameters: see k_means.utils.mapping.Parameters for more details.
+        data_eng: see k_means.core.data_prep.DataEng for more details.
 
     Returns:
-        matrix_dists: x and y distributions as points in a matrix.
+        data_eng: since we change the centroids,
+            we need to update the data_eng.centroids_new attribute and return data_eng.
     """
-    # convert distribution lists to Matrices
-    matrix_dists = []
-    for i in range(num_dists):
-        matrix_dists.append(np.array([x_dists[i], y_dists[i]]).transpose())
-    # shape here == num_dists x num_samples x 2 (the 2 here represents the (x,y) coordinate pairing)
-    matrix_dists = np.array(matrix_dists)
-    return matrix_dists
+    data_eng.centroids_new = data_eng.centroids_prev.copy()
+    for i in range(parameters.num_clusters):
+        data_eng.centroids_new[i] = [np.array(data_eng.clusters[i])[:, 0].mean(),
+                                     np.array(data_eng.clusters[i])[:, 1].mean()]
+    return data_eng
 
 
-def dists_min_max(x_dists: list,
-                  y_dists: list) -> Dict[str, float]:
-    """Find limits of x and y distributions.
+def append_to_results(parameters: Parameters,
+                      data_eng: DataEng,
+                      counter: int) -> Dict[any, any]:
+    """Create a dict to store the results for plotting.
 
     Args:
-        x_dists: random numbers of the distributions in the x-axis.
-        y_dists: random numbers of the distributions in the y-axis.
+        parameters: see k_means.utils.mapping.Parameters for more details.
+        data_eng: see k_means.core.data_prep.DataEng for more details.
+        counter: the iteration number.
 
     Returns:
-        boundaries: min and max in both the x and y direction.
+        results_iter: dict of results used in plotting the simulation.
     """
-    boundaries = {
-        'min_x': np.array(x_dists).min(),
-        'min_y': np.array(y_dists).min(),
-        'max_x': np.array(x_dists).max(),
-        'max_y': np.array(y_dists).max()
+    results_iter = {
+        'iteration': counter,
+        'cluster_plots': [],
+        'new_centroids': {}
     }
-    return boundaries
+    for i in range(parameters.num_clusters):
+        results_iter['cluster_plots'].append({
+            'plot_x_' + str(i + 1): np.array(data_eng.clusters[i])[:, 0],
+            'plot_y_' + str(i + 1): np.array(data_eng.clusters[i])[:, 1],
+            'plot_c_' + str(i + 1): data_eng.colours[i],
+            'plot_label_' + str(i + 1): 'Cluster ' + str(i + 1)
+        })
+    # add new centroids to results
+    results_iter['new_centroids']['x'] = data_eng.centroids_new[:, 0]
+    results_iter['new_centroids']['y'] = data_eng.centroids_new[:, 1]
+    results_iter['new_centroids']['c'] = 'r'
+    results_iter['new_centroids']['marker'] = '*'
+    results_iter['new_centroids']['s'] = 200
+    results_iter['new_centroids']['label'] = 'Centroids Iter ' + str(counter + 1)
+    return results_iter
 
 
-def initial_centroids(num_clusters: int,
-                      boundaries: Dict[str, float]) -> np.array:
-    """Create random initial centroids within our limits.
-
-    Args:
-        num_clusters: number of clusters to find, hence number of needed initial centroids.
-        boundaries: need the limits in which to randomly choose initial centroids.
-
-    Returns:
-        np.array(centroids_prev): array containing initial centroids.
-    """
-    print('Choosing initial centroids randomly')
-    centroids_prev = []
-    for _ in range(num_clusters):
-        centroids_prev.append([random.uniform(boundaries['min_x'], boundaries['max_x']),
-                               random.uniform(boundaries['min_y'], boundaries['max_y'])])
-    return np.array(centroids_prev)
-
-
-def clusters_list(num_clusters: int) -> List[list]:
-    """Create a list of empty lists for number of desired clusters.
-
-    Args:
-        num_clusters: number of clusters to find, we will be storing points in these empty indexed lists.
-
-    Returns:
-        clusters: empty list of lists.
-    """
-    clusters = []
-    for _ in range(num_clusters):
-        clusters.append([])
-    return clusters
-
-
-def choose_colours(num_clusters: int) -> np.array:
-    """"Randomly choose colours equivalent to the number of clusters we need to find.
+def check_for_convergence(parameters: Parameters,
+                          data_eng: DataEng,
+                          counter: int) -> [DataEng, bool]:
+    """Test for convergence.
+        Easiest way, also saves most memory, is to test if the centroids distance from the
+        previous centroid is less than epsilon (usually a small value).
+        Hence, if the centroid has not moved or barely moved, the desired number of clusters has been obtained
 
     Args:
-        num_clusters: desired number of clusters to find.
+        parameters: see k_means.utils.mapping.Parameters for more details.
+        data_eng: see k_means.core.data_prep.DataEng for more details.
+        counter: the iteration number.
 
     Returns:
-        colours: array of randomly chosen numbers which == a colour when plotting.
+        data_eng: if we have not reached convergence,
+            we need to reset our clusters and assign our new found centroids as the previous ones.
+        convergence: True or False, have we reached convergence or not.
     """
-    colours = np.zeros([num_clusters, 1, 3])
-    for i in range(num_clusters):
-        colours[i] = [random.random(), random.random(), random.random()]
-    return colours
+    distances_bool = []
+    for i in range(parameters.num_clusters):
+        dist_cen = sqrt(
+            (data_eng.centroids_new[i][0] - data_eng.centroids_prev[i][0]) ** 2 + (
+                    data_eng.centroids_new[i][1] - data_eng.centroids_prev[i][1]) ** 2)
+        if dist_cen <= parameters.eps:
+            distances_bool.append(True)
+        elif dist_cen > parameters.eps:
+            distances_bool.append(False)
+    # if all distances are under a certain eps threshold, end algorithm;
+    # if not, assign new centroids as previous, and clear clusters from plots
+    if all(distances_bool):
+        print(f'\nConvergence achieved in {counter + 1} iterations')
+        convergence = True
+    elif not all(distances_bool):
+        data_eng.centroids_prev = data_eng.centroids_new
+        data_eng.clusters = clusters_list(parameters.num_clusters)
+        convergence = False
+    # also test if max number of iterations has been reached
+    if counter >= parameters.max_iter:
+        print('Convergence timed out by Maximum number of iterations')
+        convergence = True
+    return data_eng, convergence

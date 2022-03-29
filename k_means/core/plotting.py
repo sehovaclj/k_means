@@ -27,10 +27,12 @@ def plot_simulation(parameters: Parameters,
     # plot distributions without colour. Keep track of this figure for remaining K-means clustering
     plt.figure(2)
     plots = scatter_plot_initial_dists_no_colour(parameters, data_eng)
-    plt.pause(parameters.pause_length)
+    if parameters.show_plots:
+        plt.pause(parameters.pause_length)
     # add centroids to colourless plot
     plot_cens = plot_initial_centroids(data_eng)
-    plt.pause(parameters.pause_length)
+    if parameters.show_plots:
+        plt.pause(parameters.pause_length)
     # now plot the results of the simulation
     for results_iter in results:
         if results_iter['iteration'] > 0:
@@ -38,13 +40,16 @@ def plot_simulation(parameters: Parameters,
         # clear old clusters from plot (figure 2)
         plots = clear_old_clusters_and_plot_new_ones(parameters, plots, results_iter)
         plt.legend()
-        plt.pause(parameters.pause_length)
+        if parameters.show_plots:
+            plt.pause(parameters.pause_length)
         # remove old centroids and legend
         plot_cens.remove()
         # plot new centroids
         plot_cens = plot_new_centroids(results_iter)
         plt.legend()
-        plt.pause(parameters.pause_length)
+        if parameters.show_plots:
+            plt.pause(parameters.pause_length)
     # end of results loop
-    print('End of program, plots will be active for 20 seconds')
-    plt.pause(20.0)
+    if parameters.show_plots:
+        print('End of program, plots will be active for 20 seconds')
+        plt.pause(20.0)

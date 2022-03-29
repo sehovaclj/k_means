@@ -1,7 +1,7 @@
 """Module that contains main data prep."""
 from typing import Tuple
 from k_means.utils.mapping import Parameters
-from k_means.utils.algorithm import create_random_dists, dists_as_matrix, \
+from k_means.utils.data_prep import create_random_dists, dists_as_matrix, \
     dists_min_max, initial_centroids, clusters_list, choose_colours
 
 

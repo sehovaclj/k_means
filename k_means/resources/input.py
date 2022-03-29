@@ -21,6 +21,7 @@ default_message = {
     "NumberSamples": 200,
     "EpsilonForConvergence": 0.01,
     "MaxIterations": 15,
+    "ShowPlots": True,
     "AddNoise": True,
     "PauseLength": 0.5,
     "Seed": 11
