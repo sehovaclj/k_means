@@ -1,7 +1,10 @@
 """Module that contains functions called during the core algorithm run."""
+import sys
+from inspect import currentframe
 from typing import Dict, List
 import numpy as np
 from numpy import random
+from k_means.utils.exception_log_manager import print_detailed_exception
 from k_means.utils.mapping import Parameters
 
 
@@ -51,8 +54,11 @@ def dists_as_matrix(num_dists: int,
     """
     # convert distribution lists to Matrices
     matrix_dists = []
-    for i in range(num_dists):
-        matrix_dists.append(np.array([x_dists[i], y_dists[i]]).transpose())
+    try:
+        for i in range(num_dists):
+            matrix_dists.append(np.array([x_dists[i], y_dists[i]]).transpose())
+    except IndexError as index_expt:
+        print_detailed_exception(currentframe().f_code.co_name, sys.exc_info(), index_expt)
     # shape here == num_dists x num_samples x 2 (the 2 here represents the (x,y) coordinate pairing)
     matrix_dists = np.array(matrix_dists)
     return matrix_dists
@@ -69,12 +75,16 @@ def dists_min_max(x_dists: list,
     Returns:
         boundaries: min and max in both the x and y direction.
     """
-    boundaries = {
-        'min_x': np.array(x_dists).min(),
-        'min_y': np.array(y_dists).min(),
-        'max_x': np.array(x_dists).max(),
-        'max_y': np.array(y_dists).max()
-    }
+    try:
+        boundaries = {
+            'min_x': np.array(x_dists).min(),
+            'min_y': np.array(y_dists).min(),
+            'max_x': np.array(x_dists).max(),
+            'max_y': np.array(y_dists).max()
+        }
+    except ValueError as value_expt:
+        print_detailed_exception(currentframe().f_code.co_name, sys.exc_info(), value_expt)
+        boundaries = {}
     return boundaries
 
 
@@ -91,9 +101,12 @@ def initial_centroids(num_clusters: int,
     """
     print('Choosing initial centroids randomly')
     centroids_prev = []
-    for _ in range(num_clusters):
-        centroids_prev.append([random.uniform(boundaries['min_x'], boundaries['max_x']),
-                               random.uniform(boundaries['min_y'], boundaries['max_y'])])
+    try:
+        for _ in range(num_clusters):
+            centroids_prev.append([random.uniform(boundaries['min_x'], boundaries['max_x']),
+                                   random.uniform(boundaries['min_y'], boundaries['max_y'])])
+    except KeyError as key_expt:
+        print_detailed_exception(currentframe().f_code.co_name, sys.exc_info(), key_expt)
     return np.array(centroids_prev)
 
 

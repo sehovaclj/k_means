@@ -1,7 +1,10 @@
 """Module to store functions used in core algorithm sequence."""
+import sys
+from inspect import currentframe
 from math import sqrt
 from typing import Dict
 import numpy as np
+from k_means.utils.exception_log_manager import print_detailed_exception
 from k_means.utils.mapping import Parameters
 from k_means.core.data_prep import DataEng
 from k_means.utils.data_prep import clusters_list
@@ -26,14 +29,19 @@ def calculate_distances(parameters: Parameters,
         for sample in range(parameters.num_samples):
             distances = []
             # for each sample, compute distance to each centroid
-            for cluster in range(parameters.num_clusters):
-                distances.append(
-                    sqrt((data_eng.matrix_dists[dist][sample][0] - data_eng.centroids_prev[cluster][0]) ** 2 + (
-                            data_eng.matrix_dists[dist][sample][1] - data_eng.centroids_prev[cluster][1]) ** 2))
-            # find smallest distance
-            c_idx = np.array(distances).argmin()
-            # append sample, or point, to that cluster
-            data_eng.clusters[c_idx].append(data_eng.matrix_dists[dist][sample])
+            try:
+                for cluster in range(parameters.num_clusters):
+                    distances.append(
+                        sqrt((data_eng.matrix_dists[dist][sample][0] - data_eng.centroids_prev[cluster][0]) ** 2 + (
+                                data_eng.matrix_dists[dist][sample][1] - data_eng.centroids_prev[cluster][1]) ** 2))
+                # find smallest distance
+                c_idx = np.array(distances).argmin()
+                # append sample, or point, to that cluster
+                data_eng.clusters[c_idx].append(data_eng.matrix_dists[dist][sample])
+            except IndexError as index_expt:
+                print_detailed_exception(currentframe().f_code.co_name, sys.exc_info(), index_expt)
+                # would then store exception in the db
+    # end of outer-most for loop
     return data_eng
 
 
@@ -53,9 +61,12 @@ def find_new_centroids(parameters: Parameters,
             we need to update the data_eng.centroids_new attribute and return data_eng.
     """
     data_eng.centroids_new = data_eng.centroids_prev.copy()
-    for i in range(parameters.num_clusters):
-        data_eng.centroids_new[i] = [np.array(data_eng.clusters[i])[:, 0].mean(),
-                                     np.array(data_eng.clusters[i])[:, 1].mean()]
+    try:
+        for i in range(parameters.num_clusters):
+            data_eng.centroids_new[i] = [np.array(data_eng.clusters[i])[:, 0].mean(),
+                                         np.array(data_eng.clusters[i])[:, 1].mean()]
+    except IndexError as index_expt:
+        print_detailed_exception(currentframe().f_code.co_name, sys.exc_info(), index_expt)
     return data_eng
 
 
@@ -77,20 +88,23 @@ def append_to_results(parameters: Parameters,
         'cluster_plots': [],
         'new_centroids': {}
     }
-    for i in range(parameters.num_clusters):
-        results_iter['cluster_plots'].append({
-            'plot_x_' + str(i + 1): np.array(data_eng.clusters[i])[:, 0],
-            'plot_y_' + str(i + 1): np.array(data_eng.clusters[i])[:, 1],
-            'plot_c_' + str(i + 1): data_eng.colours[i],
-            'plot_label_' + str(i + 1): 'Cluster ' + str(i + 1)
-        })
-    # add new centroids to results
-    results_iter['new_centroids']['x'] = data_eng.centroids_new[:, 0]
-    results_iter['new_centroids']['y'] = data_eng.centroids_new[:, 1]
-    results_iter['new_centroids']['c'] = 'r'
-    results_iter['new_centroids']['marker'] = '*'
-    results_iter['new_centroids']['s'] = 200
-    results_iter['new_centroids']['label'] = 'Centroids Iter ' + str(counter + 1)
+    try:
+        for i in range(parameters.num_clusters):
+            results_iter['cluster_plots'].append({
+                'plot_x_' + str(i + 1): np.array(data_eng.clusters[i])[:, 0],
+                'plot_y_' + str(i + 1): np.array(data_eng.clusters[i])[:, 1],
+                'plot_c_' + str(i + 1): data_eng.colours[i],
+                'plot_label_' + str(i + 1): 'Cluster ' + str(i + 1)
+            })
+        # add new centroids to results
+        results_iter['new_centroids']['x'] = data_eng.centroids_new[:, 0]
+        results_iter['new_centroids']['y'] = data_eng.centroids_new[:, 1]
+        results_iter['new_centroids']['c'] = 'r'
+        results_iter['new_centroids']['marker'] = '*'
+        results_iter['new_centroids']['s'] = 200
+        results_iter['new_centroids']['label'] = 'Centroids Iter ' + str(counter + 1)
+    except IndexError as index_expt:
+        print_detailed_exception(currentframe().f_code.co_name, sys.exc_info(), index_expt)
     return results_iter
 
 
@@ -113,14 +127,17 @@ def check_for_convergence(parameters: Parameters,
         convergence: True or False, have we reached convergence or not.
     """
     distances_bool = []
-    for i in range(parameters.num_clusters):
-        dist_cen = sqrt(
-            (data_eng.centroids_new[i][0] - data_eng.centroids_prev[i][0]) ** 2 + (
-                    data_eng.centroids_new[i][1] - data_eng.centroids_prev[i][1]) ** 2)
-        if dist_cen <= parameters.eps:
-            distances_bool.append(True)
-        elif dist_cen > parameters.eps:
-            distances_bool.append(False)
+    try:
+        for i in range(parameters.num_clusters):
+            dist_cen = sqrt(
+                (data_eng.centroids_new[i][0] - data_eng.centroids_prev[i][0]) ** 2 + (
+                        data_eng.centroids_new[i][1] - data_eng.centroids_prev[i][1]) ** 2)
+            if dist_cen <= parameters.eps:
+                distances_bool.append(True)
+            elif dist_cen > parameters.eps:
+                distances_bool.append(False)
+    except IndexError as index_expt:
+        print_detailed_exception(currentframe().f_code.co_name, sys.exc_info(), index_expt)
     # if all distances are under a certain eps threshold, end algorithm;
     # if not, assign new centroids as previous, and clear clusters from plots
     if all(distances_bool):

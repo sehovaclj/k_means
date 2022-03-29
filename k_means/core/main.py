@@ -1,6 +1,7 @@
 """Main sequence of functions to run algorithm."""
 from typing import Dict
 import numpy as np
+import time
 from k_means.utils.mapping import Parameters
 from k_means.core.data_prep import main_data_engineering
 from k_means.core.algorithm import k_means_algorithm
@@ -23,8 +24,10 @@ def run(message: Dict[str, any]) -> None:
     # preserving random state
     np.random.seed(parameters.seed)
     # main data engineering is first
+    t0 = time.time()
     data_eng, parameters = main_data_engineering(parameters)
     # main k-means algorithm, return results
     results = k_means_algorithm(parameters, data_eng)
+    print(f'Main data prep and k means algorithm took: {round(time.time() - t0, 3)}s')
     # plot initial distributions, results and simulation of our k means algorithm
     plot_simulation(parameters, data_eng, results)
