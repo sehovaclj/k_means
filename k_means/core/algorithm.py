@@ -1,9 +1,10 @@
 """Module with functions that run the main k-means algorithm."""
 from typing import List
-from k_means.utils.mapping import Parameters
+
 from k_means.core.data_prep import DataEng
 from k_means.utils.algorithm import calculate_distances, find_new_centroids, append_to_results, \
     check_for_convergence
+from k_means.utils.mapping import Parameters
 
 
 def k_means_algorithm(parameters: Parameters,

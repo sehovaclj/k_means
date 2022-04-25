@@ -1,11 +1,13 @@
 """Module to plot the simulation and iteration results of the algorithm."""
 from typing import List
+
 import matplotlib.pyplot as plt
+
+from k_means.core.data_prep import DataEng
+from k_means.utils.mapping import Parameters
 from k_means.utils.plotting import scatter_plot_initial_dists, \
     scatter_plot_initial_dists_no_colour, plot_initial_centroids, \
     plot_new_centroids, clear_old_clusters_and_plot_new_ones
-from k_means.utils.mapping import Parameters
-from k_means.core.data_prep import DataEng
 
 
 def plot_simulation(parameters: Parameters,

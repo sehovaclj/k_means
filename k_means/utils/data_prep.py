@@ -2,8 +2,10 @@
 import sys
 from inspect import currentframe
 from typing import Dict, List
+
 import numpy as np
 from numpy import random
+
 from k_means.utils.exception_log_manager import print_detailed_exception
 from k_means.utils.mapping import Parameters
 

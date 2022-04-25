@@ -1,5 +1,6 @@
 import pytest
-from k_means.core.main import run
+
+from k_means.core.app import run
 from k_means.resources.input import default_message
 
 

@@ -13,6 +13,6 @@ max-attributes=10
 # disable=
 
 [MASTER]
-# add file to ignore -- useful during testing and iterative SDLC
+# add file(s) to ignore -- useful during testing and iterative SDLC
 
 --ignore-patterns=*/tests/*,*/venv/*

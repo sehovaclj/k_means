@@ -3,11 +3,13 @@ import sys
 from inspect import currentframe
 from math import sqrt
 from typing import Dict
+
 import numpy as np
-from k_means.utils.exception_log_manager import print_detailed_exception
-from k_means.utils.mapping import Parameters
+
 from k_means.core.data_prep import DataEng
 from k_means.utils.data_prep import clusters_list
+from k_means.utils.exception_log_manager import print_detailed_exception
+from k_means.utils.mapping import Parameters
 
 
 def calculate_distances(parameters: Parameters,
@@ -129,9 +131,8 @@ def check_for_convergence(parameters: Parameters,
     distances_bool = []
     try:
         for i in range(parameters.num_clusters):
-            dist_cen = sqrt(
-                (data_eng.centroids_new[i][0] - data_eng.centroids_prev[i][0]) ** 2 + (
-                        data_eng.centroids_new[i][1] - data_eng.centroids_prev[i][1]) ** 2)
+            dist_cen = sqrt((data_eng.centroids_new[i][0] - data_eng.centroids_prev[i][0]) ** 2 + (
+                    data_eng.centroids_new[i][1] - data_eng.centroids_prev[i][1]) ** 2)
             if dist_cen <= parameters.eps:
                 distances_bool.append(True)
             elif dist_cen > parameters.eps:

@@ -1,8 +1,10 @@
 """Module to contain functions used in core algorithm."""
 from typing import List, Dict
+
 import matplotlib.pyplot as plt
-from k_means.utils.mapping import Parameters
+
 from k_means.core.data_prep import DataEng
+from k_means.utils.mapping import Parameters
 
 
 def scatter_plot_initial_dists(parameters: Parameters,
